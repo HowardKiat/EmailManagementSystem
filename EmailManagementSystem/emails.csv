@@ -1,0 +1,16 @@
+EmailID,Type,Priority,Content
+1,Inbox,Normal,Welcome to our service! We’re excited to have you.
+2,Inbox,High,Your account password needs updating.
+3,Inbox,Low,Here’s your monthly newsletter.
+4,Outbox,Normal,Following up on our previous conversation.
+5,Outbox,High,Project update for your review.
+6,Spam,Normal,Congratulations! You’ve won a lottery. Click here to claim.
+7,Spam,Normal,Free gift for you! Open now to see your reward.
+8,Inbox,High,Important: Upcoming changes to our policy.
+9,Inbox,Normal,Reminder: Please verify your email address.
+10,Priority,High,URGENT: Meeting scheduled for tomorrow.
+11,Priority,Low,Optional feedback survey for our service.
+12,Spam,Normal,You’re pre-approved for a new credit card.
+13,Inbox,Normal,Your recent order has shipped!
+14,Outbox,Normal,Thanks for your inquiry. We’ll respond shortly.
+15,Inbox,High,Action required: Suspicious activity detected on your account.

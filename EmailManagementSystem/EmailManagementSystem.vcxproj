@@ -127,7 +127,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Queue.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="QueueLinkedList.hpp" />
+    <ClCompile Include="StackLinkedList.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Inbox.hpp" />
+    <ClInclude Include="Outbox.hpp" />
+    <ClInclude Include="PriorityQueue.hpp" />
+    <ClInclude Include="SearchAndRetrieval.hpp" />
+    <ClInclude Include="SpamDetector.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
