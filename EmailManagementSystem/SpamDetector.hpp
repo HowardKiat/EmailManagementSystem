@@ -6,20 +6,19 @@ private:
     QueueLinkedList spamQueue;
 
 public:
-    void markSpam(string email);
-    void showSpam();
-    void deleteSpam();
+    // Method to mark an email as spam by enqueueing it into the spam queue
+    void markSpam(const std::string& email) {
+        spamQueue.enqueue(email);
+    }
+
+    // Method to display spam emails
+    void showSpam() const {
+        if (spamQueue.isEmpty()) {
+            std::cout << "No spam emails.\n";
+        }
+        else {
+            std::cout << "Displaying spam emails:\n";
+            spamQueue.displayQueue();
+        }
+    }
 };
-
-
-void SpamDetector::markSpam(string email) {
-    spamQueue.enqueue(email);
-}
-
-void SpamDetector::showSpam() {
-    spamQueue.displayQueue();
-}
-
-void SpamDetector::deleteSpam() {
-    spamQueue.dequeue();
-}

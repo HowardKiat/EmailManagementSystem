@@ -1,28 +1,32 @@
 #pragma once
-#include "QueueLinkedList.hpp"
+#include <iostream>
+#include <queue>
+#include <string>
 
 class PriorityQueue {
 private:
-    QueueLinkedList highPriority;
-    QueueLinkedList lowPriority;
+    std::priority_queue<std::pair<int, std::string>> priorityEmails;
 
 public:
-    void addHighPriority(string email);
-    void addLowPriority(string email);
-    void showPriority();
+    // Method to add an email with a high priority (priority is the first parameter)
+    void addHighPriority(const std::string& email, int priority) {
+        priorityEmails.push(std::make_pair(priority, email));
+    }
+
+    // Method to show priority emails
+    void showPriority() const {
+        if (priorityEmails.empty()) {
+            std::cout << "No priority emails.\n";
+        }
+        else {
+            std::cout << "Displaying priority emails:\n";
+            // Creating a temporary queue to preserve the original queue
+            std::priority_queue<std::pair<int, std::string>> tempQueue = priorityEmails;
+            while (!tempQueue.empty()) {
+                std::cout << "Priority " << tempQueue.top().first << ": "
+                    << tempQueue.top().second << std::endl;
+                tempQueue.pop();
+            }
+        }
+    }
 };
-
-void PriorityQueue::addHighPriority(string email) {
-    highPriority.enqueue(email);
-}
-
-void PriorityQueue::addLowPriority(string email) {
-    lowPriority.enqueue(email);
-}
-
-void PriorityQueue::showPriority() {
-    cout << "High Priority Emails:" << endl;
-    highPriority.displayQueue();
-    cout << "Low Priority Emails:" << endl;
-    lowPriority.displayQueue();
-}

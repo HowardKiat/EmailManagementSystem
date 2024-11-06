@@ -3,23 +3,18 @@
 
 class Outbox {
 private:
-    QueueLinkedList sentEmails;
+    QueueLinkedList outboxQueue;
 
 public:
-    void sendEmail(string email);
-    void showOutbox();
-    void removeSentEmail();
+    // Method to send an email by enqueueing it into the outbox queue
+    void sendEmail(const std::string& email) {
+        outboxQueue.enqueue(email);
+        std::cout << "Email sent: " << email << std::endl;
+    }
+
+    // Method to display outbox contents
+    void showOutbox() const {
+        std::cout << "Displaying outbox contents:\n";
+        outboxQueue.displayQueue();
+    }
 };
-
-
-void Outbox::sendEmail(string email) {
-    sentEmails.enqueue(email);
-}
-
-void Outbox::showOutbox() {
-    sentEmails.displayQueue();
-}
-
-void Outbox::removeSentEmail() {
-    sentEmails.dequeue();
-}

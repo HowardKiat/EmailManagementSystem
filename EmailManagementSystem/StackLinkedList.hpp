@@ -1,64 +1,57 @@
 #pragma once
 #include <iostream>
+#include <string>
 using namespace std;
 
-struct StackNode {
+class StackNode {
+public:
     string data;
     StackNode* next;
-    StackNode(string data) : data(data), next(nullptr) {}
+    StackNode(const string& d) : data(d), next(nullptr) {}
 };
 
 class StackLinkedList {
 private:
     StackNode* top;
-    int size;
 
 public:
-    StackLinkedList();
-    ~StackLinkedList();
-    void push(string data);
-    void pop();
-    bool isEmpty();
-    int getSize();
-    void displayStack();
-};
+    StackLinkedList() : top(nullptr) {}
 
-StackLinkedList::StackLinkedList() : top(nullptr), size(0) {}
-
-StackLinkedList::~StackLinkedList() {
-    while (!isEmpty()) pop();
-}
-
-void StackLinkedList::push(string data) {
-    StackNode* newNode = new StackNode(data);
-    newNode->next = top;
-    top = newNode;
-    size++;
-}
-
-void StackLinkedList::pop() {
-    if (isEmpty()) return;
-    StackNode* temp = top;
-    top = top->next;
-    delete temp;
-    size--;
-}
-
-bool StackLinkedList::isEmpty() {
-    return top == nullptr;
-}
-
-int StackLinkedList::getSize() {
-    return size;
-}
-
-void StackLinkedList::displayStack() {
-    StackNode* temp = top;
-    while (temp) {
-        cout << temp->data << " ";
-        temp = temp->next;
+    ~StackLinkedList() {
+        while (top != nullptr) {
+            pop();
+        }
     }
-    cout << endl;
-}
 
-//CHANGE LATER ON
+    void push(const string& item) {
+        StackNode* newNode = new StackNode(item);
+        newNode->next = top;
+        top = newNode;
+    }
+
+    void pop() {
+        if (top == nullptr) {
+            cout << "Stack is empty.\n";
+            return;
+        }
+        StackNode* temp = top;
+        top = top->next;
+        delete temp;
+    }
+
+    void displayStack() const {
+        StackNode* current = top;
+        if (current == nullptr) {
+            cout << "Stack is empty.\n";
+            return;
+        }
+        while (current) {
+            cout << current->data << endl;
+            current = current->next;
+        }
+    }
+
+    bool isEmpty() const {
+        return top == nullptr;
+    }
+};

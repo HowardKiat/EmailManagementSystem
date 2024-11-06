@@ -5,55 +5,48 @@
 #include "Outbox.hpp"
 #include "SpamDetector.hpp"
 #include "PriorityQueue.hpp"
-#include "QueueLinkedList.hpp" // Include your QueueLinkedList definition
+#include "SearchAndRetrieval.hpp"
 
 using namespace std;
 
-// Function to load emails from a CSV file
-void loadEmailsFromFile(const std::string& filename, Inbox& inbox, Outbox& outbox, SpamDetector& spamFilter, PriorityQueue& priorityQueue) {
-    std::ifstream file(filename);
-    std::string line;
+void loadEmailsFromFile(const string& filename, Inbox& inbox, Outbox& outbox, SpamDetector& spamFilter, PriorityQueue& priorityQueue, SearchAndRetrieval& searchAndRetrieve) {
+    ifstream file(filename);
+    string line;
 
     if (!file.is_open()) {
-        std::cerr << "Error: Could not open file " << filename << std::endl;
+        cerr << "Error: Could not open file " << filename << endl;
         return;
     }
 
-    // Skip header line
-    std::getline(file, line);
+    getline(file, line);  // Skip header line
 
-    // Read each line from the file
-    while (std::getline(file, line)) {
-        std::stringstream ss(line);
-        std::string emailID, type, priorityLevel, content;
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string id, sender, recipient, subject, content, priority;
 
-        // Extract fields by splitting the line with a comma
-        std::getline(ss, emailID, ',');
-        std::getline(ss, type, ',');
-        std::getline(ss, priorityLevel, ',');
-        std::getline(ss, content, ',');
+        getline(ss, id, ',');  // Assuming CSV format uses commas
+        getline(ss, sender, ',');
+        getline(ss, recipient, ',');
+        getline(ss, subject, ',');
+        getline(ss, content, ',');
+        getline(ss, priority, ',');
 
-        // Assign emails to the appropriate data structure based on their type and priority
-        if (type == "Inbox") {
-            if (priorityLevel == "High") {
-                inbox.receiveEmail(content + " [High Priority]");
-            }
-            else if (priorityLevel == "Normal") {
-                inbox.receiveEmail(content + " [Normal Priority]");
-            }
-            else {
-                inbox.receiveEmail(content + " [Low Priority]");
-            }
+        string email = "From: " + sender + ", To: " + recipient + ", Subject: " + subject + ", Content: " + content;
+        int priorityLevel = stoi(priority);
+
+        // Spam detection based on keywords
+        if (content.find("discount") != string::npos || content.find("prize") != string::npos || content.find("offer") != string::npos) {
+            spamFilter.markSpam(email);
         }
-        else if (type == "Outbox") {
-            outbox.sendEmail(content);
+        else if (priorityLevel == 1) {
+            priorityQueue.addHighPriority(email, priorityLevel);
         }
-        else if (type == "Spam") {
-            spamFilter.markSpam(content);
+        else {
+            inbox.receiveEmail(email);
+            outbox.sendEmail(email);
         }
-        else if (type == "Priority") {
-            priorityQueue.addHighPriority(content + " [Priority]");
-        }
+
+        searchAndRetrieve.addEmail(email);
     }
 
     file.close();
@@ -64,22 +57,75 @@ int main() {
     Outbox outbox;
     SpamDetector spamFilter;
     PriorityQueue priorityQueue;
+    SearchAndRetrieval searchAndRetrieve;
 
-    // Load emails from the CSV file
-    loadEmailsFromFile("emails.csv", inbox, outbox, spamFilter, priorityQueue);
+    loadEmailsFromFile("emails.csv", inbox, outbox, spamFilter, priorityQueue, searchAndRetrieve);
 
-    // Display the contents of each category
-    cout << "Inbox:\n";
-    inbox.showInbox();
+    int choice;
+    while (true) {
+        cout << "\nEmail Management System\n";
+        cout << "1. View Inbox\n2. Send Email\n3. View Outbox\n4. View Priority Emails\n5. View Spam\n6. Search Email by Sender\n7. Search Email by Subject\n8. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
 
-    cout << "\nOutbox:\n";
-    outbox.showOutbox();
+        switch (choice) {
+        case 1:
+            cout << "Inbox:\n";
+            inbox.showInbox();
+            break;
+        case 2: {
+            string sender, recipient, subject, content;
+            cout << "Enter sender: ";
+            cin.ignore(); // To clear the input buffer
+            getline(cin, sender);
+            cout << "Enter recipient: ";
+            getline(cin, recipient);
+            cout << "Enter subject: ";
+            getline(cin, subject);
+            cout << "Enter content: ";
+            getline(cin, content);
 
-    cout << "\nSpam:\n";
-    spamFilter.showSpam();
-
-    cout << "\nPriority:\n";
-    priorityQueue.showPriority();
+            string email = "From: " + sender + ", To: " + recipient + ", Subject: " + subject + ", Content: " + content;
+            inbox.receiveEmail(email);
+            outbox.sendEmail(email);
+            cout << "Email sent successfully!\n";
+            break;
+        }
+        case 3:
+            cout << "Outbox:\n";
+            outbox.showOutbox();
+            break;
+        case 4:
+            cout << "Priority Emails:\n";
+            priorityQueue.showPriority();
+            break;
+        case 5:
+            cout << "Spam Emails:\n";
+            spamFilter.showSpam();
+            break;
+        case 6: {
+            string sender;
+            cout << "Enter sender email: ";
+            cin >> sender;
+            searchAndRetrieve.searchBySender(sender);
+            break;
+        }
+        case 7: {
+            string subject;
+            cout << "Enter email subject: ";
+            cin.ignore();
+            getline(cin, subject);
+            searchAndRetrieve.searchBySubject(subject);
+            break;
+        }
+        case 8:
+            cout << "Exiting the system.\n";
+            return 0;
+        default:
+            cout << "Invalid choice. Try again.\n";
+            break;
+        }
+    }
 
     return 0;
 }
