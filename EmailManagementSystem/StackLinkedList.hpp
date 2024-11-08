@@ -39,6 +39,14 @@ public:
         delete temp;
     }
 
+    string peek() const {
+        if (top == nullptr) {
+            cout << "Stack is empty.\n";
+            return "";
+        }
+        return top->data;
+    }
+
     void displayStack() const {
         StackNode* current = top;
         if (current == nullptr) {

@@ -59,6 +59,23 @@ public:
         }
     }
 
+    // Search emails by date
+    void searchByDate(const std::string& date) const {
+        bool found = false;
+        std::cout << "Searching for emails on date: " << date << std::endl;
+        EmailNode* current = head;
+        while (current != nullptr) {
+            if (current->email.find("Date: " + date) != std::string::npos) {
+                std::cout << current->email << std::endl;
+                found = true;
+            }
+            current = current->next;
+        }
+        if (!found) {
+            std::cout << "No emails found on " << date << "." << std::endl;
+        }
+    }
+
     // Destructor cleans up the dynamically allocated memory
     ~SearchAndRetrieval() {
         while (head) {

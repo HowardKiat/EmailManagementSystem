@@ -115,11 +115,11 @@ int main() {
     while (true) {
         cout << "\n======================== Email Management System ========================\n";
         printDivider();
-        cout << "1. View Inbox\n2. Send Email\n3. View Outbox\n4. View Important Emails\n5. View General Emails\n6. View Spam\n7. Search Email by Sender\n8. Search Email by Subject\n9. Exit\n";
+        cout << "1. View Inbox\n2. Send Email\n3. View Outbox\n4. View Important Emails\n5. View General Emails\n6. View Spam\n7. Search Email by Sender\n8. Search Email by Subject\n9. Search Email by Date\n10. Exit\n";
         printDivider();
 
         // Input validation
-        cout << "Enter your choice (1-9): ";
+        cout << "Enter your choice (1-10): ";
         cin >> choice;
 
         // Check if the input failed (non-integer or special character input)
@@ -202,13 +202,21 @@ int main() {
             printDivider();
             break;
         }
-        case 9:
-            cout << "Exiting the Email Management System. Goodbye!\n";
+        case 9: {
+            string date;
+            cout << "\nEnter date (dd-mm-yyyy) to search for: ";
+            cin.ignore();
+            getline(cin, date);
+            searchAndRetrieve.searchByDate(date);
+            printDivider();
+            break;
+        }
+        case 10:
+            cout << "Exiting program. Goodbye!" << endl;
             return 0;
         default:
-            cout << "Invalid choice. Please select an option between 1 and 9.\n";
+            cout << "Invalid choice! Please try again." << endl;
         }
     }
-
     return 0;
 }
