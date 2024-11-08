@@ -159,7 +159,7 @@ int main() {
 
             string email = "From: " + sender + ", To: " + recipient + ", Subject: " + subject + ", Content: " + content + ", Date: " + date + ", Time: " + time;
             outbox.sendEmail(email);
-            inbox.receiveEmail(email);
+            searchAndRetrieve.addEmail(email);
             cout << "Email sent successfully!\n";
             printDivider();
             break;
