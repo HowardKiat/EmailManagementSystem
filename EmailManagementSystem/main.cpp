@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
+#include <ctime>
 #include "Inbox.hpp"
 #include "Outbox.hpp"
 #include "SpamDetector.hpp"
@@ -9,6 +9,7 @@
 
 using namespace std;
 
+// Function to load emails from a CSV file and categorize them
 void loadEmailsFromFile(const string& filename, Inbox& inbox, Outbox& outbox, SpamDetector& spamFilter, PriorityQueue& priorityQueue, SearchAndRetrieval& searchAndRetrieve) {
     ifstream file(filename);
     string line;
@@ -21,27 +22,45 @@ void loadEmailsFromFile(const string& filename, Inbox& inbox, Outbox& outbox, Sp
     getline(file, line);  // Skip header line
 
     while (getline(file, line)) {
-        stringstream ss(line);
-        string id, sender, recipient, subject, content, priority;
+        size_t pos = 0;
+        string fields[8];
+        int index = 0;
 
-        getline(ss, id, ',');  // Assuming CSV format uses commas
-        getline(ss, sender, ',');
-        getline(ss, recipient, ',');
-        getline(ss, subject, ',');
-        getline(ss, content, ',');
-        getline(ss, priority, ',');
+        // Extract fields based on commas
+        while ((pos = line.find(',')) != string::npos && index < 8) {
+            fields[index++] = line.substr(0, pos);
+            line.erase(0, pos + 1);
+        }
+        fields[index] = line;  // Last field
 
-        string email = "From: " + sender + ", To: " + recipient + ", Subject: " + subject + ", Content: " + content;
-        int priorityLevel = stoi(priority);
+        string id = fields[0];
+        string sender = fields[1];
+        string recipient = fields[2];
+        string subject = fields[3];
+        string content = fields[4];
+        string priority = fields[5];
+        string date = (index >= 6) ? fields[6] : "N/A";
+        string time = (index >= 7) ? fields[7] : "N/A";
 
-        // Spam detection based on keywords
+        string email = "From: " + sender + ", To: " + recipient + ", Subject: " + subject + ", Content: " + content + ", Date: " + date + ", Time: " + time;
+        int priorityLevel;
+        try {
+            priorityLevel = stoi(priority);
+        }
+        catch (invalid_argument& e) {
+            cerr << "Invalid priority level for email: " << email << endl;
+            continue;
+        }
+
+        // Spam detection and priority handling
         if (content.find("discount") != string::npos || content.find("prize") != string::npos || content.find("offer") != string::npos) {
             spamFilter.markSpam(email);
         }
         else if (priorityLevel == 1) {
-            priorityQueue.addHighPriority(email, priorityLevel);
+            priorityQueue.addImportantEmail(email, priorityLevel);
         }
         else {
+            priorityQueue.addGeneralEmail(email);
             inbox.receiveEmail(email);
             outbox.sendEmail(email);
         }
@@ -52,31 +71,53 @@ void loadEmailsFromFile(const string& filename, Inbox& inbox, Outbox& outbox, Sp
     file.close();
 }
 
+// Function to print a divider line
+void printDivider() {
+    cout << "------------------------------------------------------------\n";
+}
+
 int main() {
+    // Initialize system components
     Inbox inbox;
     Outbox outbox;
     SpamDetector spamFilter;
     PriorityQueue priorityQueue;
     SearchAndRetrieval searchAndRetrieve;
 
+    // Load emails from CSV file
     loadEmailsFromFile("emails.csv", inbox, outbox, spamFilter, priorityQueue, searchAndRetrieve);
 
     int choice;
     while (true) {
-        cout << "\nEmail Management System\n";
-        cout << "1. View Inbox\n2. Send Email\n3. View Outbox\n4. View Priority Emails\n5. View Spam\n6. Search Email by Sender\n7. Search Email by Subject\n8. Exit\n";
-        cout << "Enter choice: ";
+        cout << "\n======================== Email Management System ========================\n";
+        printDivider();
+        cout << "1. View Inbox\n2. Send Email\n3. View Outbox\n4. View Important Emails\n5. View General Emails\n6. View Spam\n7. Search Email by Sender\n8. Search Email by Subject\n9. Exit\n";
+        printDivider();
+
+        // Input validation
+        cout << "Enter your choice (1-9): ";
         cin >> choice;
 
+        // Check if the input failed (non-integer or special character input)
+        if (cin.fail()) {
+            cout << "Invalid input. Please enter a number between 1 and 9.\n";
+            cin.clear();  // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Ignore the invalid input
+            continue;  // Go back to the start of the loop
+        }
+
         switch (choice) {
-        case 1:
-            cout << "Inbox:\n";
+        case 1: {
+            cout << "\n----- Inbox -----\n";
             inbox.showInbox();
+            printDivider();
             break;
+        }
         case 2: {
             string sender, recipient, subject, content;
+            cout << "\n----- Send New Email -----\n";
             cout << "Enter sender: ";
-            cin.ignore(); // To clear the input buffer
+            cin.ignore();
             getline(cin, sender);
             cout << "Enter recipient: ";
             getline(cin, recipient);
@@ -85,44 +126,64 @@ int main() {
             cout << "Enter content: ";
             getline(cin, content);
 
-            string email = "From: " + sender + ", To: " + recipient + ", Subject: " + subject + ", Content: " + content;
+            // Get current date and time
+            time_t now = time(0);
+            tm ltm;
+            localtime_s(&ltm, &now);
+
+            string date = to_string(ltm.tm_mon + 1) + "/" + to_string(ltm.tm_mday) + "/" + to_string(1900 + ltm.tm_year);
+            string time = to_string(ltm.tm_hour) + ":" + to_string(ltm.tm_min);
+
+            string email = "From: " + sender + ", To: " + recipient + ", Subject: " + subject + ", Content: " + content + ", Date: " + date + ", Time: " + time;
             inbox.receiveEmail(email);
             outbox.sendEmail(email);
-            cout << "Email sent successfully!\n";
+            cout << "\nEmail sent successfully!\n";
+            printDivider();
             break;
         }
         case 3:
-            cout << "Outbox:\n";
+            cout << "\n----- Outbox -----\n";
             outbox.showOutbox();
+            printDivider();
             break;
         case 4:
-            cout << "Priority Emails:\n";
-            priorityQueue.showPriority();
+            cout << "\n----- Important Emails -----\n";
+            priorityQueue.showImportantEmails();
+            printDivider();
             break;
         case 5:
-            cout << "Spam Emails:\n";
-            spamFilter.showSpam();
+            cout << "\n----- General Emails -----\n";
+            priorityQueue.showGeneralEmails();
+            printDivider();
             break;
-        case 6: {
+        case 6:
+            cout << "\n----- Spam Emails -----\n";
+            spamFilter.showSpam();
+            printDivider();
+            break;
+        case 7: {
             string sender;
-            cout << "Enter sender email: ";
+            cout << "\nEnter sender email to search: ";
             cin >> sender;
             searchAndRetrieve.searchBySender(sender);
+            printDivider();
             break;
         }
-        case 7: {
+        case 8: {
             string subject;
-            cout << "Enter email subject: ";
+            cout << "\nEnter subject to search: ";
             cin.ignore();
             getline(cin, subject);
             searchAndRetrieve.searchBySubject(subject);
+            printDivider();
             break;
         }
-        case 8:
-            cout << "Exiting the system.\n";
+        case 9:
+            cout << "\nExiting the system. Goodbye!\n";
             return 0;
         default:
-            cout << "Invalid choice. Try again.\n";
+            cout << "Invalid choice. Please select a valid option.\n";
+            printDivider();
             break;
         }
     }
