@@ -52,8 +52,33 @@ void loadEmailsFromFile(const string& filename, Inbox& inbox, Outbox& outbox, Sp
             continue;
         }
 
-        // Spam detection and priority handling
-        if (content.find("discount") != string::npos || content.find("prize") != string::npos || content.find("offer") != string::npos) {
+        // Spam detection and priority handling with hardcoded spam words
+        if (content.find("free") != string::npos ||
+            content.find("win") != string::npos ||
+            content.find("congratulations") != string::npos ||
+            content.find("limited time offer") != string::npos ||
+            content.find("urgent") != string::npos ||
+            content.find("act now") != string::npos ||
+            content.find("winner") != string::npos ||
+            content.find("claim") != string::npos ||
+            content.find("click here") != string::npos ||
+            content.find("exclusive") != string::npos ||
+            content.find("100% free") != string::npos ||
+            content.find("guaranteed") != string::npos ||
+            content.find("discount") != string::npos ||
+            content.find("offer expires") != string::npos ||
+            content.find("risk-free") != string::npos ||
+            content.find("money-back guarantee") != string::npos ||
+            content.find("no obligation") != string::npos ||
+            content.find("order now") != string::npos ||
+            content.find("promise you") != string::npos ||
+            content.find("apply now") != string::npos ||
+            content.find("buy direct") != string::npos ||
+            content.find("credit card required") != string::npos ||
+            content.find("amazing") != string::npos ||
+            content.find("investment") != string::npos ||
+            content.find("deal") != string::npos ||
+            content.find("winning") != string::npos) {
             spamFilter.markSpam(email);
         }
         else if (priorityLevel == 1) {
@@ -62,7 +87,6 @@ void loadEmailsFromFile(const string& filename, Inbox& inbox, Outbox& outbox, Sp
         else {
             priorityQueue.addGeneralEmail(email);
             inbox.receiveEmail(email);
-            outbox.sendEmail(email);
         }
 
         searchAndRetrieve.addEmail(email);
@@ -107,12 +131,11 @@ int main() {
         }
 
         switch (choice) {
-        case 1: {
+        case 1:
             cout << "\n----- Inbox -----\n";
             inbox.showInbox();
             printDivider();
             break;
-        }
         case 2: {
             string sender, recipient, subject, content;
             cout << "\n----- Send New Email -----\n";
@@ -129,15 +152,15 @@ int main() {
             // Get current date and time
             time_t now = time(0);
             tm ltm;
-            localtime_s(&ltm, &now);
+            localtime_s(&ltm, &now);  // Use localtime_s instead of localtime
 
             string date = to_string(ltm.tm_mon + 1) + "/" + to_string(ltm.tm_mday) + "/" + to_string(1900 + ltm.tm_year);
             string time = to_string(ltm.tm_hour) + ":" + to_string(ltm.tm_min);
 
             string email = "From: " + sender + ", To: " + recipient + ", Subject: " + subject + ", Content: " + content + ", Date: " + date + ", Time: " + time;
-            inbox.receiveEmail(email);
             outbox.sendEmail(email);
-            cout << "\nEmail sent successfully!\n";
+            inbox.receiveEmail(email);
+            cout << "Email sent successfully!\n";
             printDivider();
             break;
         }
@@ -163,15 +186,16 @@ int main() {
             break;
         case 7: {
             string sender;
-            cout << "\nEnter sender email to search: ";
-            cin >> sender;
+            cout << "Enter sender name to search: ";
+            cin.ignore();
+            getline(cin, sender);
             searchAndRetrieve.searchBySender(sender);
             printDivider();
             break;
         }
         case 8: {
             string subject;
-            cout << "\nEnter subject to search: ";
+            cout << "Enter subject to search: ";
             cin.ignore();
             getline(cin, subject);
             searchAndRetrieve.searchBySubject(subject);
@@ -179,12 +203,10 @@ int main() {
             break;
         }
         case 9:
-            cout << "\nExiting the system. Goodbye!\n";
+            cout << "Exiting the Email Management System. Goodbye!\n";
             return 0;
         default:
-            cout << "Invalid choice. Please select a valid option.\n";
-            printDivider();
-            break;
+            cout << "Invalid choice. Please select an option between 1 and 9.\n";
         }
     }
 

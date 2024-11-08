@@ -1,20 +1,27 @@
 #pragma once
-#include "QueueLinkedList.hpp"
+#include "StackLinkedList.hpp"
+#include <iostream>
+#include <string>
 
 class Outbox {
 private:
-    QueueLinkedList outboxQueue;
+    StackLinkedList outboxStack;  // Stack for Outbox
 
 public:
-    // Method to send an email by enqueueing it into the outbox queue
+    // Method to send an email by pushing it onto the outbox stack
     void sendEmail(const std::string& email) {
-        outboxQueue.enqueue(email);
+        outboxStack.push(email);  // Push to stack (LIFO order)
         std::cout << "Email sent: " << email << std::endl;
     }
 
-    // Method to display outbox contents
+    // Method to display outbox contents (LIFO order)
     void showOutbox() const {
-        std::cout << "Displaying outbox contents:\n";
-        outboxQueue.displayQueue();
+        if (outboxStack.isEmpty()) {
+            std::cout << "Outbox is empty. No emails have been sent yet.\n";
+        }
+        else {
+            std::cout << "Displaying outbox contents (LIFO order):\n";
+            outboxStack.displayStack();  // Display in stack order (LIFO)
+        }
     }
 };
