@@ -9,19 +9,19 @@ private:
     std::queue<std::string> generalEmails;
 
 public:
-    // Method to add an email as "important" with a high priority level
+    // "IMPORTANT EMAILS"
     void addImportantEmail(const std::string& email, int priority) {
         importantEmails.push(std::make_pair(priority, email));
         std::cout << "Added to Important Emails with priority " << priority << ": " << email << std::endl;
     }
 
-    // Method to add a "general" priority email with no urgency
+    // "GENERAL EMAILS"
     void addGeneralEmail(const std::string& email) {
         generalEmails.push(email);
         std::cout << "Added to General Emails: " << email << std::endl;
     }
 
-    // Method to display important emails (highest priority first)
+    // Method to display important emails (highest priority first - Priority 1)
     void showImportantEmails() const {
         if (importantEmails.empty()) {
             std::cout << "No important emails.\n";
@@ -37,7 +37,7 @@ public:
         }
     }
 
-    // Method to display general emails (in order of arrival)
+    // Display GENERAL EMAILS
     void showGeneralEmails() const {
         if (generalEmails.empty()) {
             std::cout << "No general emails.\n";

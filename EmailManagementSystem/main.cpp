@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
 #include <ctime>
 #include "Inbox.hpp"
@@ -112,6 +112,18 @@ int main() {
     loadEmailsFromFile("emails.csv", inbox, outbox, spamFilter, priorityQueue, searchAndRetrieve);
 
     int choice;
+
+    cout << " _____                    ___   ___        _____           _ _              " << endl;
+    cout << "|   __|___ ___ _ _ ___   |_  | |_  |      |   __|_____ ___|_| |             " << endl;
+    cout << "|  |  |  _| . | | | . |   _| |_ _| |_     |   __|     | .'| | |             " << endl;
+    cout << "|_____|_| |___|___|  _|  |_____|_____|    |_____|_|_|_|__,|_|_|             " << endl;
+    cout << "                  |_|                                                       " << endl;
+    cout << "                                                                            " << endl;
+    cout << " _____                                   _      _____         _             " << endl;
+    cout << "|     |___ ___ ___ ___ ___ _____ ___ ___| |_   |   __|_ _ ___| |_ ___ _____ " << endl;
+    cout << "| | | | .'|   | .'| . | -_|     | -_|   |  _|  |__   | | |_ -|  _| -_|     |" << endl;
+    cout << "|_|_|_|__,|_|_|__,|_  |___|_|_|_|___|_|_|_|    |_____|_  |___|_| |___|_|_|_|" << endl;
+    cout << "                  |___|                              |___|                  " << endl;
     while (true) {
         cout << "\n======================== Email Management System ========================\n";
         printDivider();

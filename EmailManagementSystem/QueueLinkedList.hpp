@@ -6,21 +6,27 @@ private:
     struct Node {
         std::string email;
         Node* next;
-        Node(const std::string& emailContent) : email(emailContent), next(nullptr) {}
+        Node(const std::string& emailContent) {
+            email = emailContent;
+            next = nullptr;
+        }
     };
 
     Node* front;
     Node* rear;
 
 public:
-    QueueLinkedList() : front(nullptr), rear(nullptr) {}
+    QueueLinkedList() {
+        front = nullptr;
+        rear = nullptr;
+    }
 
     // Check if the queue is empty
     bool isEmpty() const {
         return front == nullptr;
     }
 
-    // Enqueue an email to the queue
+    // Enqueue
     void enqueue(const std::string& email) {
         Node* newNode = new Node(email);
         if (isEmpty()) {
@@ -32,7 +38,7 @@ public:
         }
     }
 
-    // Dequeue an email from the queue
+    // Dequeue
     void dequeue() {
         if (isEmpty()) {
             std::cout << "Queue is empty.\n";

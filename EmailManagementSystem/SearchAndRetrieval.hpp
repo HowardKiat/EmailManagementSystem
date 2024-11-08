@@ -6,8 +6,10 @@ struct EmailNode {
     std::string email;
     EmailNode* next;
 
-    // Constructor initializes email content and sets the next pointer to nullptr
-    EmailNode(const std::string& emailContent) : email(emailContent), next(nullptr) {}
+    EmailNode(const std::string& emailContent) {
+        email = emailContent;
+        next = nullptr;
+    }
 };
 
 class SearchAndRetrieval {
@@ -18,7 +20,7 @@ public:
     // Constructor initializes the head pointer to nullptr
     SearchAndRetrieval() : head(nullptr) {}
 
-    // Add an email to the linked list
+    // Add email to the linked list
     void addEmail(const std::string& email) {
         EmailNode* newNode = new EmailNode(email);
         newNode->next = head;
@@ -76,7 +78,7 @@ public:
         }
     }
 
-    // Destructor cleans up the dynamically allocated memory
+    // Destructor (Clean the Allocated Memory)
     ~SearchAndRetrieval() {
         while (head) {
             EmailNode* temp = head;

@@ -8,7 +8,7 @@ private:
     StackLinkedList outboxStack;  // Stack for Outbox
 
 public:
-    // Method to send an email by pushing it onto the outbox stack
+    // Method to send an email by pushing it onto the "OUTBOX" stack
     void sendEmail(const std::string& email) {
         if (email.empty()) {
             std::cerr << "Error: Cannot send an empty email." << std::endl;
@@ -29,7 +29,7 @@ public:
         }
     }
 
-    // Method to get all emails in the outbox for searching
+    // Method to get all emails in the "OUTBOX" for searching
     void getAllOutboxEmails(StackLinkedList& outboxSearchList) const {
         // Create a temporary stack to hold the emails for iteration
         StackLinkedList tempStack = outboxStack;
